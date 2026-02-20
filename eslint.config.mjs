@@ -2,7 +2,7 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-  const eslintConfig = defineConfig([ 
+const eslintConfig = defineConfig([
   globalIgnores(['dist/**', 'src/generated']),
   eslint.configs.recommended,
   tseslint.configs.recommended,
@@ -26,7 +26,19 @@ import { defineConfig, globalIgnores } from 'eslint/config'
         },
       ],
     },
-  }
+  },
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+  },
 ])
 
 
