@@ -10,7 +10,8 @@
     "**/Flutter/ephemeral": true,
     "**/.symlinks": true,
     "**/.plugin_symlinks": true,
-    "dist": true
+    "dist": true,
+    "node_modules": true
   },
   "explorerExclude.backup": {}
 }
