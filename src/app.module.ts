@@ -1,6 +1,7 @@
+import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './modules/auth/auth.module'
 import environmentSchema from '@/server/environment-schema'
-import { ConfigModule } from '@nestjs/config'
+import { DatabaseModule } from './database/database.module'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { RequestUserMiddleware } from './middlewares/request-user.middleware'
 import { RequestPreviewMiddleware } from './middlewares/request-preview.middleware'
@@ -14,8 +15,7 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     AuthModule,
-    // ? uncomment the following lines to enable database integration automatically
-    // DatabaseModule,
+    DatabaseModule,
     // ? uncomment the following lines to enable nodemailer integration automatically
     // MailerModule.forRootAsync({
     //   inject: [ConfigService],
