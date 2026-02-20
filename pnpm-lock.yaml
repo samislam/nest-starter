@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@clscripts/cl-common':
-        specifier: ^1.0.4
-        version: 1.0.4
+        specifier: ^1.0.5
+        version: 1.0.5
       '@clscripts/cross-env':
         specifier: ^7.0.3
         version: 7.0.3
@@ -415,8 +415,8 @@ packages:
   '@borewit/text-codec@0.2.1':
     resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
 
-  '@clscripts/cl-common@1.0.4':
-    resolution: {integrity: sha512-eh2Eb70U8cKccOZ8bGPFIqmrabFJPoYY9Wt01/XHCPhum9ojQjx/CLq0QM2RLVQwLxeP0eKtp2Ss7PF3IsaRHg==}
+  '@clscripts/cl-common@1.0.5':
+    resolution: {integrity: sha512-FZkCxkVyk8r2zFTXO7+fBIadJEaI1CY5Uk3cimqQ5KrUbrho1U+WmOKT25plX1C9JDEpLuMXFxr7Bkkj9UUwjA==}
 
   '@clscripts/cross-env@7.0.3':
     resolution: {integrity: sha512-AuJpg4jvbFWxBzqrLQ5QfQWrymFUbGi9a3QDbeqdNYBOsKL/5Ay9M8aOiSfCejgoDvw2g574sysnbgHEEx5sYw==}
@@ -4687,43 +4687,43 @@ snapshots:
 
   '@borewit/text-codec@0.2.1': {}
 
-  '@clscripts/cl-common@1.0.4': {}
+  '@clscripts/cl-common@1.0.5': {}
 
   '@clscripts/cross-env@7.0.3':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/del-cli@6.0.0':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/dotenv-cli@8.0.1':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/echo-cli@2.0.0':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/eslint@9.30.3':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/nestjs-cli@11.0.7':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/prettier@3.6.2':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/prisma@6.11.1':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@clscripts/ts-patch@3.3.0':
     dependencies:
-      '@clscripts/cl-common': 1.0.4
+      '@clscripts/cl-common': 1.0.5
 
   '@colors/colors@1.5.0':
     optional: true

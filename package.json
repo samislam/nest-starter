@@ -29,7 +29,7 @@
     "@/*": "./src/*"
   },
   "dependencies": {
-    "@clscripts/cl-common": "^1.0.4",
+    "@clscripts/cl-common": "^1.0.5",
     "@clscripts/cross-env": "^7.0.3",
     "@clscripts/nestjs-cli": "^11.0.7",
     "@inquirer/prompts": "^7.10.1",
