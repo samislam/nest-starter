@@ -28,5 +28,5 @@
     "forceConsistentCasingInFileNames": true,
     "noPropertyAccessFromIndexSignature": false 
   },
-  "include": ["./src/**/*.ts", "./tests/**/*.ts"]
+  "include": ["./src/**/*.ts", "./tests/**/*.ts", "./scripts/**/*.ts"]
 }
