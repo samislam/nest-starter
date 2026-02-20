@@ -1,9 +1,9 @@
 /**
  * Dynamically constructs a Prisma `include` object based on allowed fields.
  *
- * @param populate - List of fields requested by the client
- * @param allowedFields - Whitelist of allowed relation fields (e.g. ['supplier', 'service'])
- * @returns - Prisma include object
+ * @param populate       - List of fields requested by the client.
+ * @param allowedFields  - Whitelist of allowed relation fields (e.g. ['supplier', 'service'])
+ * @returns - Prisma include object.
  */
 export function populatePrisma<T extends string>(
   populate: string[] = [],

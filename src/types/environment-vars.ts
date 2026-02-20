@@ -5,17 +5,21 @@ export interface EnvironmentVars {
   PORT: number
   // -----------DATABASE------------
   /**
-   * The database connection string
+   * The database connection string.
    *
    * @example
-   *   - postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public
+   *
+   * - postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public
+   *
    */
   DATABASE_URL: string
   /**
-   * NODEMAILER_HOST
+   * NODEMAILER_HOST.
    *
    * @example
+   *
    *   smtp.example.com
+   *
    */
   EMAIL_HOST: string
   /** SMTP client username */
