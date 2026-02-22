@@ -1,7 +1,7 @@
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './modules/auth/auth.module'
-import environmentSchema from '@/server/environment-schema'
 import { DatabaseModule } from './database/database.module'
+import { environmentVarsSchema } from '@/server/environment-schema'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { RequestUserMiddleware } from './middlewares/request-user.middleware'
 import { RequestPreviewMiddleware } from './middlewares/request-preview.middleware'
@@ -10,9 +10,8 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [],
-      validationSchema: environmentSchema,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      validate: (env) => environmentVarsSchema.parse(env),
+      envFilePath: [`.env.${process.env.NODE_ENV ?? 'development'}`, '.env'],
     }),
     AuthModule,
     DatabaseModule,

@@ -1,12 +1,11 @@
-import * as Joi from 'joi'
-import { EnvironmentVars } from '@/types/environment-vars'
+import { z } from 'zod'
 
-export default Joi.object<EnvironmentVars>({
-  HOST: Joi.string().default('localhost'),
-  PORT: Joi.number().port().default(4000),
-  // # Database authentication
-  DATABASE_URL: Joi.string().optional().min(0),
-  EMAIL_HOST: Joi.string().optional().min(0),
-  EMAIL_USERNAME: Joi.string().optional().min(0),
-  EMAIL_PASSWORD: Joi.string().optional().min(0),
+export const environmentVarsSchema = z.object({
+  HOST: z.string().default('localhost'),
+  PORT: z.coerce.number().default(4000),
+  DATABASE_URL: z.string().optional(),
+  COINGEKO_API_KEY: z.string().trim(),
+  EMAIL_HOST: z.string().optional(),
+  EMAIL_USERNAME: z.string().optional(),
+  EMAIL_PASSWORD: z.string().optional(),
 })

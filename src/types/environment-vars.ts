@@ -26,4 +26,6 @@ export interface EnvironmentVars {
   EMAIL_USERNAME: string
   /** SMTP client password */
   EMAIL_PASSWORD: string
+  /** api to fetch coin icons and prices */
+  COINGEKO_API_KEY: string
 }
