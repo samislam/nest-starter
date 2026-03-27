@@ -9,3 +9,5 @@ export const environmentVarsSchema = z.object({
   EMAIL_USERNAME: z.string().optional(),
   EMAIL_PASSWORD: z.string().optional(),
 })
+
+export type Environment = z.infer<typeof environmentVarsSchema>

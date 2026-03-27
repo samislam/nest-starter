@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { 
+  "compilerOptions": {
     "rootDir": "./",
     "types": ["jest", "node"],
     "paths": {
@@ -13,12 +13,10 @@
     "module": "commonjs",
     "noImplicitAny": true,
     "removeComments": true,
-    "noUnusedLocals": false,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
-    "noUnusedParameters": false,
     "strictBindCallApply": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -26,7 +24,7 @@
     "allowSyntheticDefaultImports": true,
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
-    "noPropertyAccessFromIndexSignature": false 
+    "noPropertyAccessFromIndexSignature": false
   },
   "include": ["./src/**/*.ts", "./tests/**/*.ts", "./scripts/**/*.ts"]
 }

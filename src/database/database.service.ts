@@ -1,11 +1,11 @@
 import { ConfigService } from '@nestjs/config'
 import { PrismaClient } from '@/generated/prisma'
-import { EnvironmentVars } from '@/types/environment-vars'
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
+import { Environment } from '@/server/environment-schema'
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 
 @Injectable()
 export class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor(private readonly config: ConfigService<EnvironmentVars>) {
+  constructor(@Inject(ConfigService) config: ConfigService<Environment>) {
     super({
       datasources: {
         db: {

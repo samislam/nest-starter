@@ -6,6 +6,8 @@ import { runCommand } from '@clscripts/cl-common'
 import { Prisma, PrismaRunMode } from '@clscripts/prisma'
 import { select, confirm, input } from '@inquirer/prompts'
 
+const shellEscape = (value: string) => `'${value.replace(/'/g, `'"'"'`)}'`
+
 async function main() {
   const nodeEnv = process.env.NODE_ENV ?? 'development'
   const possibleEnvFiles = [`.env.${nodeEnv}.local`, '.env.local', `.env.${nodeEnv}`, '.env']
@@ -18,7 +20,22 @@ async function main() {
 
   // Read command-line arguments
   const args = process.argv.slice(2) // Ignore "node/bun" and script filename
-  let mode: PrismaRunMode = args[0] as PrismaRunMode // e.g., "migrate" or "studio"
+  const wantsExplicitPassthrough = args[0] === '--'
+  const passthroughArgs = wantsExplicitPassthrough ? args.slice(1) : args
+  const maybeMode = passthroughArgs[0]
+
+  if (passthroughArgs.length > 0 && (wantsExplicitPassthrough || !maybeMode)) {
+    const prismaCommand = `prisma ${passthroughArgs.map(shellEscape).join(' ')}`
+    runCommand(
+      new DotenvCli({
+        envFile: dotenvFile,
+        execute: prismaCommand,
+      }).command
+    )
+    return
+  }
+
+  let mode: PrismaRunMode = maybeMode as PrismaRunMode // e.g., "migrate" or "studio"
   if (!mode)
     mode = await select({
       message: 'Choose an operation for the Prisma CLI to execute:',

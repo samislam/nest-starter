@@ -1,8 +1,12 @@
 import { ConfigModule } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 import { AuthModule } from './modules/auth/auth.module'
 import { DatabaseModule } from './database/database.module'
+import { HttpExceptionFilter } from './common/filters/zod.filter'
 import { environmentVarsSchema } from '@/server/environment-schema'
+import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod'
 import { RequestUserMiddleware } from './middlewares/request-user.middleware'
 import { RequestPreviewMiddleware } from './middlewares/request-preview.middleware'
 
@@ -13,6 +17,7 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
       validate: (env) => environmentVarsSchema.parse(env),
       envFilePath: [`.env.${process.env.NODE_ENV ?? 'development'}`, '.env'],
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     DatabaseModule,
     // ? uncomment the following lines to enable nodemailer integration automatically
@@ -37,7 +42,20 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
     // }),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ZodSerializerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

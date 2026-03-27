@@ -25,6 +25,8 @@ const eslintConfig = defineConfig([
           argsIgnorePattern: '^_',
         },
       ],
+      'no-unused-private-class-members': 'off',
+      '@typescript-eslint/no-unused-private-class-members': 'warn',
     },
   },
   {

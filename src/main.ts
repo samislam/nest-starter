@@ -3,17 +3,29 @@ import { AppModule } from './app.module'
 import { NestFactory } from '@nestjs/core'
 import { formatUrl } from './utils/formatUrl'
 import { ConfigService } from '@nestjs/config'
-import { EnvironmentVars } from './types/environment-vars'
-import { ValidationPipe, VersioningType } from '@nestjs/common'
+import { cleanupOpenApiDoc } from 'nestjs-zod'
+import { VersioningType } from '@nestjs/common'
+import { Environment } from './server/environment-schema'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
+
+  const openApiDoc = SwaggerModule.createDocument(
+    app,
+    new DocumentBuilder()
+      .setTitle('Example API')
+      .setDescription('Example API description')
+      .setVersion('1.0')
+      .build()
+  )
+
+  SwaggerModule.setup('api', app, cleanupOpenApiDoc(openApiDoc))
   app.enableVersioning({
     defaultVersion: '1',
     type: VersioningType.URI,
   })
-  const configService = app.get(ConfigService<EnvironmentVars, true>)
+  const configService = app.get(ConfigService<Environment, true>)
   const HOST = configService.get('HOST', { infer: true })
   const PORT = configService.get('PORT', { infer: true })
   await app.listen(PORT, HOST, () => {
