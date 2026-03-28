@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import { AppModule } from './app.module'
 import { NestFactory } from '@nestjs/core'
+import appConfig from '@/config/app.config'
 import { formatUrl } from './utils/formatUrl'
 import { ConfigService } from '@nestjs/config'
 import { cleanupOpenApiDoc } from 'nestjs-zod'
@@ -14,13 +15,13 @@ async function bootstrap() {
   const openApiDoc = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
-      .setTitle('Example API')
-      .setDescription('Example API description')
+      .setTitle(appConfig.appName)
+      .setDescription(appConfig.appDescription)
       .setVersion('1.0')
       .build()
   )
 
-  SwaggerModule.setup('api', app, cleanupOpenApiDoc(openApiDoc))
+  SwaggerModule.setup(appConfig.apiPrefix, app, cleanupOpenApiDoc(openApiDoc))
   app.enableVersioning({
     defaultVersion: '1',
     type: VersioningType.URI,
