@@ -26,6 +26,7 @@ async function bootstrap() {
     defaultVersion: '1',
     type: VersioningType.URI,
   })
+  if (appConfig.apiPrefix) app.setGlobalPrefix(appConfig.apiPrefix)
   const configService = app.get(ConfigService<Environment, true>)
   const HOST = configService.get('HOST', { infer: true })
   const PORT = configService.get('PORT', { infer: true })
