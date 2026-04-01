@@ -1,9 +1,6 @@
 import { z } from 'zod'
 import { createZodDto } from 'nestjs-zod'
-
-const omitEmptyField = (value: unknown) => {
-  return typeof value === 'string' && value.trim() === '' ? undefined : value
-}
+import { omitEmptyField } from '@/utils/omit-empty-field'
 
 export const paginationQuerySchema = z.object({
   page: z.preprocess(omitEmptyField, z.coerce.number().int().min(1).default(1)),

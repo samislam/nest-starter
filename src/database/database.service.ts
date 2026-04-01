@@ -7,6 +7,11 @@ import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 export class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor(@Inject(ConfigService) config: ConfigService<Environment>) {
     super({
+      omit: {
+        user: {
+          passwordHash: true,
+        },
+      },
       datasources: {
         db: {
           url: config.get('DATABASE_URL'),
