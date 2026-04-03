@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{mainApi}}/v1/users/:id"
+method: GET
+pathVariables:
+  id: cmnamgveq0000fz6qxy5zeq2s
+order: 2000

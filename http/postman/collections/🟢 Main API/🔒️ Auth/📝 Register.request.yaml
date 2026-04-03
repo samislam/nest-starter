@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{mainApi}}/v1/auth/register"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name": "islam",
+        "username": "islam",
+        "password": "islam"
+    }
+order: 2000

@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{mainApi}}/v1/me"
+method: PATCH
+body:
+  type: json
+  content: ""
+order: 2000
