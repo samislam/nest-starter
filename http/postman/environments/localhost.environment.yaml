@@ -1,9 +1,0 @@
-name: localhost
-values:
-  - key: mainApi
-    value: 'localhost:4000/api'
-    enabled: true
-  - key: access_token
-    value: ''
-    enabled: true
-    description: This will automatically be filled when you login
