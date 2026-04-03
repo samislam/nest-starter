@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{mainApi}}/v1/users/:id"
+method: DELETE
+pathVariables:
+  id: cmnc02eb60001fzafa4ebtz6b
+order: 4000

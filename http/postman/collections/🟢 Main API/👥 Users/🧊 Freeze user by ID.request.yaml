@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{mainApi}}/v1/users/:id/freeze"
+method: POST
+pathVariables:
+  id: ""
+order: 6000

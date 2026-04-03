@@ -1,0 +1,13 @@
+$kind: http-request
+url: '{{mainApi}}/v1/me/change-username'
+method: POST
+body:
+  type: text
+  content: |-
+    {
+        "name": "user",
+        "username": "user",
+        "password": "123456789",
+        "isActive": true
+    }
+order: 4000
