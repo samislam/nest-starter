@@ -5,6 +5,7 @@ import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 
 @Injectable()
 export class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly skipDatabaseConnect: boolean
   constructor(@Inject(ConfigService) config: ConfigService<Environment>) {
     super({
       omit: {
@@ -18,9 +19,15 @@ export class DatabaseService extends PrismaClient implements OnModuleInit, OnMod
         },
       },
     })
+
+    this.skipDatabaseConnect =
+      config.get('SKIP_DATABASE_CONNECT', {
+        infer: true,
+      }) ?? false
   }
 
   async onModuleInit() {
+    if (this.skipDatabaseConnect) return
     await this.$connect()
   }
 

@@ -1,0 +1,25 @@
+info:
+  name: 📝 Change user username by ID
+  type: http
+  seq: 9000
+http:
+  method: POST
+  url: '{{mainApi}}/v1/users/:id/change-username'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  params:
+    - name: id
+      value: ''
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "username": "islam"
+      }
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

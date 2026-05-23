@@ -1,0 +1,19 @@
+info:
+  name: 🗑️ Delete user by ID
+  type: http
+  seq: 4000
+http:
+  method: DELETE
+  url: '{{mainApi}}/v1/users/:id'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  params:
+    - name: id
+      value: cmnc02eb60001fzafa4ebtz6b
+      type: path
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

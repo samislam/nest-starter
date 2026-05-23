@@ -8,7 +8,7 @@ console.log('\n')
 async function main() {
   runSeeders(prisma, [
     /** Your seeders goes here */
-    rootAccountSeeder
+    rootAccountSeeder,
   ])
 }
 

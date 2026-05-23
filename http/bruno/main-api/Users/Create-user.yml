@@ -1,0 +1,24 @@
+info:
+  name: ➕ Create user
+  type: http
+  seq: 3000
+http:
+  method: POST
+  url: '{{mainApi}}/v1/users'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Islam",
+        "username": "islam",
+        "password": "123456789",
+        "isActive": true
+      }
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

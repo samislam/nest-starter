@@ -1,0 +1,19 @@
+info:
+  name: 🔥 Unfreeze user by ID
+  type: http
+  seq: 7000
+http:
+  method: POST
+  url: '{{mainApi}}/v1/users/:id/unfreeze'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  params:
+    - name: id
+      value: ''
+      type: path
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,19 @@
+info:
+  name: 🔍 Get user by ID
+  type: http
+  seq: 2000
+http:
+  method: GET
+  url: '{{mainApi}}/v1/users/:id'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  params:
+    - name: id
+      value: cmnamgveq0000fz6qxy5zeq2s
+      type: path
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

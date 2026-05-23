@@ -5,8 +5,10 @@ import { LoginDto } from './dto/login.dto'
 import { Prisma } from '@/generated/prisma'
 import { Injectable } from '@nestjs/common'
 import { RegisterDto } from './dto/register.dto'
+import { AuthUserDto } from './dto/auth-user.dto'
 import { PRISMA_DUPLICATE_ERR } from '@/constants'
 import { UsersService } from '../users/users.service'
+import { AuthResponseDto } from './dto/auth-response.dto'
 import { AccountForzenHttpException } from '@/classes/auth-exception.class'
 import { DuplicateHttpException } from '@/classes/duplicate-exception.class'
 import { InvalidCredentialsHttpException } from '@/classes/auth-exception.class'
@@ -39,22 +41,27 @@ export class AuthService {
     return this.buildAuthResponse(user)
   }
 
-  private async buildAuthResponse(user: {
-    id: string
-    name: string
-    username: string
-    [key: string]: unknown
-  }) {
+  private async buildAuthResponse(
+    user: AuthUserDto & {
+      passwordHash?: string
+    }
+  ): Promise<AuthResponseDto> {
     const { passwordHash: _passwordHash, ...safeUser } = user
     const accessToken = await this.jwtService.signAsync({
       sub: safeUser.id,
       name: safeUser.name,
       username: safeUser.username,
     })
+    const jwtPayload = this.jwtService.decode(accessToken)
+    if (!jwtPayload?.exp) {
+      throw new Error('Failed to resolve access token expiration date')
+    }
+    const expiresAt = new Date(jwtPayload.exp * 1000).toISOString()
 
     return {
       user: safeUser,
       accessToken,
+      expiresAt,
     }
   }
 

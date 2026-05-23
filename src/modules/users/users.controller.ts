@@ -1,19 +1,19 @@
 import { hash } from 'bcryptjs'
+import * as n from '@nestia/core'
+import { Controller } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { IdParamDto } from '@/common/dtos/id-param.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ChangeUsernameDto } from './dto/change-username.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { ListUsersQueryDto } from './dto/list-users-query.dto'
 import { CreateUserRequestDto } from './dto/create-user-request.dto'
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
 
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() dto: CreateUserRequestDto) {
+  @n.TypedRoute.Post()
+  async create(@n.TypedBody() dto: CreateUserRequestDto) {
     return this.usersService.create({
       name: dto.name,
       username: dto.username,
@@ -22,43 +22,43 @@ export class UsersController {
     })
   }
 
-  @Get()
-  list(@Query() query: ListUsersQueryDto) {
+  @n.TypedRoute.Get()
+  list(@n.TypedQuery() query: ListUsersQueryDto) {
     return this.usersService.list(query)
   }
 
-  @Get(':id')
-  findOne(@Param() params: IdParamDto) {
-    return this.usersService.findOne(params.id)
+  @n.TypedRoute.Get(':id')
+  findOne(@n.TypedParam('id') id: string) {
+    return this.usersService.findOne(id)
   }
 
-  @Patch(':id')
-  update(@Param() params: IdParamDto, @Body() dto: UpdateUserDto) {
-    return this.usersService.update(params.id, dto)
+  @n.TypedRoute.Patch(':id')
+  update(@n.TypedParam('id') id: string, @n.TypedBody() dto: UpdateUserDto) {
+    return this.usersService.update(id, dto)
   }
 
-  @Post(':id/change-password')
-  changePassword(@Param() params: IdParamDto, @Body() dto: ChangePasswordDto) {
-    return this.usersService.changePassword(params.id, dto.password)
+  @n.TypedRoute.Post(':id/change-password')
+  changePassword(@n.TypedParam('id') id: string, @n.TypedBody() dto: ChangePasswordDto) {
+    return this.usersService.changePassword(id, dto.password)
   }
 
-  @Post(':id/change-username')
-  changeUsername(@Param() params: IdParamDto, @Body() dto: ChangeUsernameDto) {
-    return this.usersService.changeUsername(params.id, dto.username)
+  @n.TypedRoute.Post(':id/change-username')
+  changeUsername(@n.TypedParam('id') id: string, @n.TypedBody() dto: ChangeUsernameDto) {
+    return this.usersService.changeUsername(id, dto.username)
   }
 
-  @Post(':id/freeze')
-  freeze(@Param() params: IdParamDto) {
-    return this.usersService.freeze(params.id)
+  @n.TypedRoute.Post(':id/freeze')
+  freeze(@n.TypedParam('id') id: string) {
+    return this.usersService.freeze(id)
   }
 
-  @Post(':id/unfreeze')
-  unfreeze(@Param() params: IdParamDto) {
-    return this.usersService.unfreeze(params.id)
+  @n.TypedRoute.Post(':id/unfreeze')
+  unfreeze(@n.TypedParam('id') id: string) {
+    return this.usersService.unfreeze(id)
   }
 
-  @Delete(':id')
-  remove(@Param() params: IdParamDto) {
-    return this.usersService.remove(params.id)
+  @n.TypedRoute.Delete(':id')
+  remove(@n.TypedParam('id') id: string) {
+    return this.usersService.remove(id)
   }
 }

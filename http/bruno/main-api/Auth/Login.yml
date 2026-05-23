@@ -1,0 +1,26 @@
+info:
+  name: 🔐 Login
+  type: http
+  seq: 1000
+http:
+  method: POST
+  url: '{{mainApi}}/v1/auth/login'
+  body:
+    type: json
+    data: |-
+      {
+        "username": "root",
+        "password": "root"
+      }
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200) {
+          bru.setVar("access_token", res.body.accessToken);
+        }
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: 📝 Change my username
+  type: http
+  seq: 4000
+http:
+  method: POST
+  url: '{{mainApi}}/v1/me/change-username'
+  auth:
+    type: bearer
+    token: '{{access_token}}'
+  body:
+    type: json
+    data: |-
+      {
+        "username": "islam"
+      }
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

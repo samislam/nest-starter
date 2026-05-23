@@ -4,6 +4,7 @@ export const environmentVarsSchema = z.object({
   HOST: z.string().default('localhost'),
   PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string().min(1),
+  SKIP_DATABASE_CONNECT: z.coerce.boolean().default(false),
   JWT_SECRET: z.string().min(16),
   JWT_EXPIRES_IN: z.string().default('7d'),
   EMAIL_HOST: z.string().optional(),

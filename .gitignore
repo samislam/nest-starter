@@ -1,6 +1,6 @@
 # compiled output
-/dist
-/node_modules
+dist
+node_modules
 /build
 
 # Logs
@@ -56,7 +56,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 !.env.example
 src/generated
 temp
-dist
 # Sentry Config File
 .env.sentry-build-plugin
 .codex
