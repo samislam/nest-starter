@@ -1,6 +1,7 @@
 import * as n from '@nestia/core'
 import { Controller } from '@nestjs/common'
 import { UsersService } from './users.service'
+import { UserDto } from './dto/user.dto'
 import { JwtUser } from '../auth/types/jwt-user.type'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
@@ -12,22 +13,28 @@ export class MeController {
   constructor(private readonly usersService: UsersService) {}
 
   @n.TypedRoute.Get()
-  findMe(@CurrentUser() user: JwtUser) {
+  findMe(@CurrentUser() user: JwtUser): Promise<UserDto> {
     return this.usersService.findOne(user.sub)
   }
 
   @n.TypedRoute.Patch()
-  updateMe(@CurrentUser() user: JwtUser, @n.TypedBody() dto: UpdateUserDto) {
+  updateMe(@CurrentUser() user: JwtUser, @n.TypedBody() dto: UpdateUserDto): Promise<UserDto> {
     return this.usersService.update(user.sub, dto)
   }
 
   @n.TypedRoute.Post('change-password')
-  changeMyPassword(@CurrentUser() user: JwtUser, @n.TypedBody() dto: ChangePasswordDto) {
+  changeMyPassword(
+    @CurrentUser() user: JwtUser,
+    @n.TypedBody() dto: ChangePasswordDto
+  ): Promise<UserDto> {
     return this.usersService.changePassword(user.sub, dto.password)
   }
 
   @n.TypedRoute.Post('change-username')
-  changeMyUsername(@CurrentUser() user: JwtUser, @n.TypedBody() dto: ChangeUsernameDto) {
+  changeMyUsername(
+    @CurrentUser() user: JwtUser,
+    @n.TypedBody() dto: ChangeUsernameDto
+  ): Promise<UserDto> {
     return this.usersService.changeUsername(user.sub, dto.username)
   }
 }

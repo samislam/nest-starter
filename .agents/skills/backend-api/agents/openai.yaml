@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend API"
+  short_description: "Follow the NestJS/Nestia backend boilerplate patterns"
+  default_prompt: "Use $backend-api to implement a backend feature with the established NestJS, Nestia, Prisma, and SDK conventions."

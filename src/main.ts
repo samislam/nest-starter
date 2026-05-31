@@ -30,6 +30,20 @@ async function bootstrap() {
   const configService = app.get(ConfigService<Environment, true>)
   const HOST = configService.get('HOST', { infer: true })
   const PORT = configService.get('PORT', { infer: true })
+  const corsOrigins = configService.get('CORS_ORIGINS', { infer: true })
+  const allowedOrigins =
+    corsOrigins === 'true'
+      ? true
+      : corsOrigins
+          .split(',')
+          .map((origin) => origin.trim())
+          .filter(Boolean)
+
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+
   await app.listen(PORT, HOST, () => {
     const url = formatUrl(HOST, PORT)
     console.log(`\nService listening on ${chalk.bold.underline(url)}\n`)

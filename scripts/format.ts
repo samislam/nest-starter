@@ -5,6 +5,7 @@ import { runCommandsSequentially } from '@clscripts/cl-common'
 runCommandsSequentially([
   new EchoCli({ message: `Formatting code...` }).command,
   new Prettier({
+    noErrorOnUnmatchedPattern: true,
     files: ['./src/**/*.{ts,js}', './test/**/*.{ts,js}'],
   }).command,
 ])

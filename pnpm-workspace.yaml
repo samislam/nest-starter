@@ -11,6 +11,7 @@ allowBuilds:
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - '@clscripts/del-cli@7.0.0'
+  - '@clscripts/prettier@3.7.0'
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@prisma/client'

@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{mainApi}}/v1/users/:id/change-username"
-method: POST
-pathVariables:
-  id: ""
-order: 9000

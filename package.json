@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "private": true,
-  "prettier": "@samislam/prettier-config",
   "scripts": {
     "dev": "tsx ./scripts/dev.ts",
     "lint": "tsx ./scripts/lint.ts",
@@ -87,13 +86,12 @@
     "@clscripts/dotenv-cli": "^8.0.1",
     "@clscripts/echo-cli": "^2.0.0",
     "@clscripts/eslint": "^9.30.3",
-    "@clscripts/prettier": "^3.6.2",
+    "@clscripts/prettier": "^3.7.0",
     "@clscripts/prisma": "^6.11.1",
     "@clscripts/ts-patch": "^3.3.0",
     "@eslint/js": "^10.0.1",
-    "@homer0/prettier-plugin-jsdoc": "11.0.2",
+    "@homer0/prettier-plugin-jsdoc": "^12.0.0",
     "@nestia/benchmark": "^11.2.1",
-    "@samislam/prettier-config": "2.0.1",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.23",
@@ -116,8 +114,8 @@
     "module-alias": "^2.3.4",
     "nestia": "^11.2.1",
     "ora": "^9.3.0",
-    "prettier": "3.7.3",
-    "prettier-plugin-tailwindcss": "0.7.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
@@ -128,5 +126,5 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.56.0"
-  }
+  },
 }

@@ -20,19 +20,26 @@ export interface PaginatedResponse<T> {
 
 interface PaginationInput {
   /** Current page number (1-based). */
+  page?: number
+  /** Number of records requested per page. */
+  perPage?: number
+}
+
+interface NormalizedPaginationInput {
+  /** Current page number (1-based). */
   page: number
   /** Number of records requested per page. */
   perPage: number
 }
 
-interface BuildPaginatedResponseParams<T> extends PaginationInput {
+interface BuildPaginatedResponseParams<T> extends NormalizedPaginationInput {
   /** Records for the current page. */
   data: T[]
   /** Total number of records across all pages. */
   total: number
 }
 
-interface PaginationArgs extends PaginationInput {
+interface PaginationArgs extends NormalizedPaginationInput {
   /** Number of records to skip before fetching the current page. */
   skip: number
   /** Number of records to fetch for the current page. */
@@ -105,7 +112,8 @@ export function buildPaginatedResponse<T>(
  * @returns Pagination arguments including `skip` and `take` for DB queries.
  */
 export function getPaginationArgs(opts: PaginationInput): PaginationArgs {
-  const { page, perPage } = opts
+  const page = opts.page ?? 1
+  const perPage = opts.perPage ?? 20
 
   return {
     page,
