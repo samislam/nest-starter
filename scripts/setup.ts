@@ -23,13 +23,25 @@ const steps = [
   { label: 'prisma db seed', command: new Prisma({ mode: 'seed' }).command },
 ]
 
+/**
+ * Matches the schema default in `src/server/environment-schema.ts`, so a fresh clone with no `.env`
+ * provisions against the same local database the app will then boot against. Keep the two in step.
+ */
+const DEV_DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/app?schema=public'
+
 if (dotenvFile) {
   console.log(chalk.cyanBright('Using environment file: '), chalk.bold.greenBright(dotenvFile))
 } else if (process.env.DATABASE_URL) {
   console.log(chalk.cyanBright('Using DATABASE_URL from environment (no env file found)'))
 } else {
-  console.error('No env file found and DATABASE_URL is not set. Please define one first!')
-  process.exit(-1)
+  // No env file and no DATABASE_URL: fall back to the development default rather than refusing to
+  // run, so `pnpm run setup` works on a fresh clone with nothing configured. The prisma CLI reads it
+  // from the environment we pass down.
+  process.env.DATABASE_URL = DEV_DATABASE_URL
+  console.log(
+    chalk.yellowBright('No env file found — using the development default database:\n  '),
+    chalk.bold.greenBright(DEV_DATABASE_URL)
+  )
 }
 
 // `runCommand` throws on a non-zero exit, so a failing step aborts the rest rather than seeding into

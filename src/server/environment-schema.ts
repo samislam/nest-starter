@@ -1,24 +1,39 @@
 import { z } from 'zod'
 
+/** The development fallback for JWT_SECRET — long enough to satisfy the schema, and blacklisted below. */
+const DEV_JWT_SECRET = 'insecure-development-only-jwt-secret'
+
+/**
+ * Known weak/placeholder secrets that must never be used in production — the schema default above and
+ * the literal shipped in `.env.example`. Production refuses to boot with either (or any short secret),
+ * so a forgotten placeholder can't leave JWTs forgeable. Add your own placeholders here as they appear.
+ */
+const WEAK_JWT_SECRETS = new Set([DEV_JWT_SECRET, 'change-this-to-a-long-secret'])
+
+/**
+ * Every variable has a working development default, so a fresh clone boots with NO `.env` file at
+ * all. The defaults are only ever safe for local development — production is held to a stricter
+ * standard by the `superRefine` below, which refuses to boot on a placeholder secret. So "it runs out
+ * of the box" never becomes "it shipped with the sample credentials".
+ */
 const baseEnvironmentSchema = z.object({
   HOST: z.string().default('localhost'),
   PORT: z.coerce.number().default(4000),
   CORS_ORIGINS: z.string().default('true'),
-  DATABASE_URL: z.string().min(1),
+  // Local Postgres with the conventional development credentials.
+  DATABASE_URL: z
+    .string()
+    .min(1)
+    .default('postgresql://postgres:postgres@localhost:5432/app?schema=public'),
   SKIP_DATABASE_CONNECT: z.coerce.boolean().default(false),
-  JWT_SECRET: z.string().min(16),
+  // Deliberately the placeholder listed in WEAK_JWT_SECRETS: it lets development run unconfigured,
+  // and it is precisely what production refuses to start with.
+  JWT_SECRET: z.string().min(16).default(DEV_JWT_SECRET),
   JWT_EXPIRES_IN: z.string().default('7d'),
   EMAIL_HOST: z.string().optional(),
   EMAIL_USERNAME: z.string().optional(),
   EMAIL_PASSWORD: z.string().optional(),
 })
-
-/**
- * Known weak/placeholder secrets that must never be used in production. The repo ships this literal in
- * `.env.example` for local convenience; refuse to boot prod with it (or any short secret), so a
- * forgotten placeholder can't leave JWTs forgeable. Add your own placeholders here as they appear.
- */
-const WEAK_JWT_SECRETS = new Set(['change-this-to-a-long-secret'])
 
 export const environmentVarsSchema = baseEnvironmentSchema.superRefine((env, ctx) => {
   if (process.env.NODE_ENV !== 'production') return
