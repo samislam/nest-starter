@@ -1,5 +1,6 @@
 import { ConfigModule } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { AuthModule } from './modules/auth/auth.module'
 import { UsersModule } from '@/modules/users/users.module'
 import { DatabaseModule } from './database/database.module'
@@ -14,12 +15,16 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
+    // App-layer rate limiting (in-memory). A lenient global default; tighten the sensitive @Public
+    // auth routes with @Throttle(). HTTP-only — the ThrottlerGuard skips non-HTTP execution contexts,
+    // so background workers and non-HTTP transports are unaffected.
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 600 }]),
     ConfigModule.forRoot({
       isGlobal: true,
       validate: (env) => environmentVarsSchema.parse(env),
       envFilePath: [`.env.${process.env.NODE_ENV ?? 'development'}`, '.env'],
     }),
-    ScheduleModule.forRoot(),
     AuthModule,
     DatabaseModule,
     UsersModule,
@@ -46,6 +51,12 @@ import { RequestPreviewMiddleware } from './middlewares/request-preview.middlewa
   ],
   controllers: [],
   providers: [
+    {
+      // Rate limit FIRST — before auth — so brute force against the public login/register routes is
+      // capped. Global guards run in registration order.
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       // Protect all routes by default unless a handler is marked public.
       provide: APP_GUARD,

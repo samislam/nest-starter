@@ -54,6 +54,7 @@
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/testing": "^11.1.14",
+    "@nestjs/throttler": "^6.5.0",
     "@prisma/client": "^6.19.2",
     "@ts-rest/nest": "^3.52.1",
     "@types/node": "^25.3.0",
