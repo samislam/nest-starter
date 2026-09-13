@@ -1,3 +1,5 @@
+import appConfig from '@/config/app.config'
+
 /** Standard paginated response envelope. */
 export interface PaginatedResponse<T> {
   /** Current page records. */
@@ -79,6 +81,20 @@ interface GetSelectArgsInput<TSelectField extends string> {
   enforcedSelect?: readonly TSelectField[]
 }
 
+/** Sentinel `?join=` value that expands to every allowed join. */
+export const JOIN_ALL = 'all'
+
+interface GetJoinArgsInput<TJoinField extends string> {
+  /** Comma-separated requested joins (e.g. `verificationStatus,saleChannelUsers`), or `all`. */
+  join?: string
+  /** Whitelisted joinable relations for the current module/resource. */
+  allowedJoin: readonly TJoinField[]
+  /** Joins applied when `join` is omitted entirely. */
+  defaultJoin?: readonly TJoinField[]
+  /** Joins always applied, regardless of request. */
+  enforcedJoin?: readonly TJoinField[]
+}
+
 /**
  * Creates a normalized paginated response object used by API endpoints.
  *
@@ -112,8 +128,18 @@ export function buildPaginatedResponse<T>(
  * @returns Pagination arguments including `skip` and `take` for DB queries.
  */
 export function getPaginationArgs(opts: PaginationInput): PaginationArgs {
-  const page = opts.page ?? 1
-  const perPage = opts.perPage ?? 20
+  // Clamp here rather than trusting each caller's DTO. `perPage` went straight through to Prisma's
+  // `take`, and only 4 of the query DTOs across 12 paginated services bounded it — so
+  // `?perPage=10000000` became a ten-million-row read and an out-of-memory restart. A per-DTO
+  // `.max()` is something you have to remember on every new endpoint; this cannot be forgotten.
+  // Non-finite and negative values collapse to the default rather than producing a negative `skip`.
+  const { defaultPerPage, maxPerPage } = appConfig.pagination
+  const requestedPage = Number(opts.page)
+  const requestedPerPage = Number(opts.perPage)
+  const page = Number.isFinite(requestedPage) ? Math.max(1, Math.floor(requestedPage)) : 1
+  const perPage = Number.isFinite(requestedPerPage)
+    ? Math.min(maxPerPage, Math.max(1, Math.floor(requestedPerPage)))
+    : defaultPerPage
 
   return {
     page,
@@ -166,4 +192,38 @@ export function getSelectArgs<TSelectField extends string>(
 
   const baseSelect = selected.length > 0 ? selected : [...defaultSelect]
   return toCanonicalOrder([...baseSelect, ...enforcedSelect])
+}
+
+/**
+ * Normalizes and validates the `?join=` relation list against an allow-list.
+ *
+ * Resolution: an omitted `join` uses `defaultJoin`; `join=all` expands to every allowed join; any
+ * other value is split on commas and intersected with `allowedJoin` (unknown/disallowed keys are
+ * dropped, so an explicit `?join=` with no valid keys joins nothing). `enforcedJoin` is always added.
+ *
+ * @param opts  Join input plus allowed/default/enforced relations.
+ * @returns Deduplicated join keys in canonical (allow-list) order.
+ */
+export function getJoinArgs<TJoinField extends string>(
+  opts: GetJoinArgsInput<TJoinField>
+): TJoinField[] {
+  const { join, allowedJoin, defaultJoin = [], enforcedJoin = [] } = opts
+  const toCanonicalOrder = (fields: readonly TJoinField[]) => {
+    const selectedSet = new Set(fields)
+    return allowedJoin.filter((field) => selectedSet.has(field))
+  }
+
+  let requested: readonly TJoinField[]
+  if (join === undefined) {
+    requested = defaultJoin
+  } else if (join.trim().toLowerCase() === JOIN_ALL) {
+    requested = allowedJoin
+  } else {
+    const normalizedFields = [...new Set(join.split(',').map((value) => value.trim()))]
+    requested = normalizedFields.filter(
+      (field): field is TJoinField => !!field && allowedJoin.includes(field as TJoinField)
+    )
+  }
+
+  return toCanonicalOrder([...requested, ...enforcedJoin])
 }

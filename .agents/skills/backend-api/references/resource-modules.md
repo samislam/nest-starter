@@ -80,8 +80,54 @@ export const itemsResourceConfig = createResourceConfig<
 })
 ```
 
-Do not include Prisma relation fields in `allowedSelect`; it is for scalar fields. Add relation
-selects manually in the service or define explicit response DTOs.
+Do not include Prisma relation fields in `allowedSelect`; it is for scalar fields. Relations are
+exposed through `?join=` instead (below), or selected manually in the service.
+
+### Joining relations (`?join=`)
+
+`allowedSelect` covers scalars. Relations are opted into per request with `?join=a,b` (or
+`?join=all`), whitelisted the same way sorting and selecting are:
+
+```ts
+export const itemsResourceConfig = createResourceConfig<
+  Prisma.ItemScalarFieldEnum,
+  Prisma.ItemWhereInput,
+  'owner' | 'tags',
+  Prisma.ItemInclude
+>({
+  // ...sort/select options as above
+  allowJoin: ['owner', 'tags'],
+  defaultJoin: ['owner'],        // applied when ?join= is omitted entirely
+  enforcedJoin: [],              // always applied, regardless of the request
+  joinMap: {                     // a key absent here defaults to `true`
+    tags: { select: { id: true, label: true } },
+  },
+})
+```
+
+Then in the service:
+
+```ts
+const include = itemsResourceConfig.buildInclude({ join: query.join })
+// ...findMany({ where, skip, take, orderBy, include })
+```
+
+Resolution rules: an omitted `join` uses `defaultJoin`; `join=all` expands to every allowed join; any
+other value is split on commas and intersected with `allowJoin` (unknown keys are dropped, so an
+explicit `?join=` with no valid keys joins nothing). `buildInclude` returns `undefined` when nothing
+is joined, so the query omits `include` entirely.
+
+Note that `select` and `include` are mutually exclusive in Prisma. A resource that exposes joins
+should query with `include` and let the DTO shape the response, rather than combining both.
+
+### Sorting by a nested field
+
+`mapOrderBy` maps a whitelisted sort key onto a nested Prisma `orderBy` structure:
+
+```ts
+mapOrderBy: (field, order) =>
+  field === 'ownerName' ? { owner: { name: order } } : { [field]: order },
+```
 
 ## Controller
 

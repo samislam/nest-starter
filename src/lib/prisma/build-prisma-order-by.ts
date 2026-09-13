@@ -1,6 +1,9 @@
 type SortOrder = 'asc' | 'desc'
 
-interface BuildPrismaOrderByInput<TSortField extends string> {
+interface BuildPrismaOrderByInput<
+  TSortField extends string,
+  TOrderByInput extends Record<string, unknown>,
+> {
   /** Primary field used for sorting. */
   sortBy: TSortField
   /** Primary sort direction. */
@@ -9,6 +12,8 @@ interface BuildPrismaOrderByInput<TSortField extends string> {
   tieBreakerField?: TSortField
   /** Optional tie-breaker direction. Defaults to `asc`. */
   tieBreakerOrder?: SortOrder
+  /** Optional mapper for nested/custom Prisma orderBy structures. */
+  mapField?: (field: TSortField, order: SortOrder) => TOrderByInput
 }
 
 /**
@@ -20,13 +25,15 @@ interface BuildPrismaOrderByInput<TSortField extends string> {
 export function buildPrismaOrderBy<
   TSortField extends string,
   TOrderByInput extends Record<string, unknown>,
->(opts: BuildPrismaOrderByInput<TSortField>): TOrderByInput[] {
-  const { sortBy, sortOrder, tieBreakerField, tieBreakerOrder = 'asc' } = opts
+>(opts: BuildPrismaOrderByInput<TSortField, TOrderByInput>): TOrderByInput[] {
+  const { sortBy, sortOrder, tieBreakerField, tieBreakerOrder = 'asc', mapField } = opts
+  const toOrderBy = (field: TSortField, order: SortOrder) =>
+    mapField ? mapField(field, order) : ({ [field]: order } as unknown as TOrderByInput)
 
-  const orderBy = [{ [sortBy]: sortOrder } as unknown as TOrderByInput]
+  const orderBy = [toOrderBy(sortBy, sortOrder)]
 
   if (tieBreakerField && tieBreakerField !== sortBy) {
-    orderBy.push({ [tieBreakerField]: tieBreakerOrder } as unknown as TOrderByInput)
+    orderBy.push(toOrderBy(tieBreakerField, tieBreakerOrder))
   }
 
   return orderBy
