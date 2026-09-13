@@ -6,6 +6,9 @@ runCommandsSequentially([
   new EchoCli({ message: `Formatting code...` }).command,
   new Prettier({
     noErrorOnUnmatchedPattern: true,
-    files: ['./src/**/*.{ts,js}', './test/**/*.{ts,js}'],
+    // Quote the globs so the shell (`spawnSync` with shell:true uses /bin/sh, which has no
+    // `globstar`) passes them through literally and prettier expands `**` recursively itself.
+    // Unquoted, /bin/sh collapses `**` to a single `*` and only top-level dirs get formatted.
+    files: ["'./src/**/*.{ts,js}'", "'./test/**/*.{ts,js}'"],
   }).command,
 ])

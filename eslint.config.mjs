@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const eslintConfig = defineConfig([
-  globalIgnores(['dist/**', 'src/generated']),
+  globalIgnores(['dist/**', 'src/generated/**', 'packages/sdk/dist/**', '.agents/**']),
   eslint.configs.recommended,
   tseslint.configs.recommended,
   {
@@ -42,6 +42,5 @@ const eslintConfig = defineConfig([
     },
   },
 ])
-
 
 export default eslintConfig

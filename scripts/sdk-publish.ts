@@ -83,9 +83,15 @@ async function main() {
     process.exit(0)
   }
 
-  runCommand(`pnpm version ${releaseType} --dir ${SDK_PACKAGE_DIR}`)
-  runCommand('pnpm run sdk:build')
-  runCommand(`pnpm publish --dir ${SDK_PACKAGE_DIR}`)
+  // Await in order: version bump → rebuild → publish. runCommand() rejects on a non-zero exit, so a
+  // failure here aborts instead of racing the next step (or exiting 0 on a half-done publish).
+  await runCommand(`pnpm version ${releaseType} --dir ${SDK_PACKAGE_DIR}`)
+  await runCommand('pnpm run sdk:build')
+  await runCommand(`pnpm publish --dir ${SDK_PACKAGE_DIR}`)
 }
 
-void main()
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error)
+  console.error(chalk.bold.redBright(`✖ SDK publish failed: ${message}`))
+  process.exit(1)
+})
