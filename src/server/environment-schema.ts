@@ -1,5 +1,26 @@
 import { z } from 'zod'
 
+/**
+ * Boolean env vars: do NOT use `z.coerce.boolean()`.
+ *
+ * It coerces via `Boolean(value)`, so the STRING `"false"` becomes `true` and the flag can never be
+ * turned off from a `.env` file. Declare opt-out flags with this instead:
+ *
+ * ```ts
+ * FEATURE_ENABLED: envFlag(true)   // default on;  "false" / "0" / "no" disables
+ * FEATURE_ENABLED: envFlag(false)  // default off; "true" / "1" / "yes" enables
+ * ```
+ */
+export const envFlag = (defaultValue: boolean) =>
+  z
+    .string()
+    .default(String(defaultValue))
+    .transform((value) =>
+      defaultValue
+        ? !['false', '0', 'no'].includes(value.trim().toLowerCase())
+        : ['true', '1', 'yes'].includes(value.trim().toLowerCase())
+    )
+
 /** The development fallback for JWT_SECRET — long enough to satisfy the schema, and blacklisted below. */
 const DEV_JWT_SECRET = 'insecure-development-only-jwt-secret'
 
@@ -23,12 +44,13 @@ const baseEnvironmentSchema = z.object({
   // How many reverse-proxy hops sit in front of this app, or an explicit trust rule. See
   // `resolveTrustProxy` for the accepted forms. Default 1 = one proxy (the usual nginx in front).
   TRUST_PROXY: z.string().default('1'),
-  // Local Postgres with the conventional development credentials.
-  DATABASE_URL: z
-    .string()
-    .min(1)
-    .default('postgresql://postgres:postgres@localhost:5432/app?schema=public'),
-  SKIP_DATABASE_CONNECT: z.coerce.boolean().default(false),
+  // Local Postgres with the conventional development credentials. An empty `DATABASE_URL=""` counts as
+  // unset, so a blank line in a .env file falls back to the default instead of refusing to boot.
+  DATABASE_URL: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().min(1).default('postgresql://postgres:postgres@localhost:5432/app?schema=public')
+  ),
+  SKIP_DATABASE_CONNECT: envFlag(false),
   // Deliberately the placeholder listed in WEAK_JWT_SECRETS: it lets development run unconfigured,
   // and it is precisely what production refuses to start with.
   JWT_SECRET: z.string().min(16).default(DEV_JWT_SECRET),
@@ -82,24 +104,3 @@ export const resolveTrustProxy = (value: string): boolean | number | string => {
   if (Number.isInteger(hops) && hops >= 0) return hops
   return normalized
 }
-
-/**
- * Boolean env vars: do NOT use `z.coerce.boolean()`.
- *
- * It coerces via `Boolean(value)`, so the STRING `"false"` becomes `true` and the flag can never be
- * turned off from a `.env` file. Declare opt-out flags with this instead:
- *
- * ```ts
- * FEATURE_ENABLED: envFlag(true)   // default on;  "false" / "0" / "no" disables
- * FEATURE_ENABLED: envFlag(false)  // default off; "true" / "1" / "yes" enables
- * ```
- */
-export const envFlag = (defaultValue: boolean) =>
-  z
-    .string()
-    .default(String(defaultValue))
-    .transform((value) =>
-      defaultValue
-        ? !['false', '0', 'no'].includes(value.trim().toLowerCase())
-        : ['true', '1', 'yes'].includes(value.trim().toLowerCase())
-    )
