@@ -30,28 +30,18 @@
 
 ```bash
 $ pnpm install
-$ pnpm run setup   # generate client → create the database → migrate → seed the first account
+$ pnpm run setup   # generates the Prisma client
 $ pnpm run dev
 ```
 
-`setup` is idempotent, so it is safe to re-run.
-
 No `.env` file is required: every variable has a development default (see
-`src/server/environment-schema.ts`), including a local Postgres at
-`postgresql://postgres:postgres@localhost:5432/app`. Copy `.env.example` to `.env.development` when
-you want to change something. Production is deliberately stricter — it refuses to start with a
-placeholder `JWT_SECRET` or with `CORS_ORIGINS="true"`.
+`src/server/environment-schema.ts`). Copy `.env.example` to `.env.development` when you want to change
+something. Production is deliberately stricter — it refuses to start with a placeholder `JWT_SECRET`
+or with `CORS_ORIGINS="true"`.
 
-### Signing in
-
-`pnpm run setup` seeds the first account and prints its credentials. By default:
-
-| username | password |
-| -------- | -------- |
-| `root`   | `root`   |
-
-Set `ROOT_USERNAME` / `ROOT_PASSWORD` before seeding to use your own. The seeder never changes the
-password of an account that already exists — delete the row if you want it reissued.
+**A database is optional.** The app boots without one (set `SKIP_DATABASE_CONNECT=true`, or just let
+the connection fail — in development it logs what to do and carries on). When your project wants a
+database, provision it yourself and run the migration and seeders explicitly.
 
 ## Installation
 
