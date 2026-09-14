@@ -7,7 +7,7 @@ import { formatUrl } from './utils/formatUrl'
 import { ConfigService } from '@nestjs/config'
 import { cleanupOpenApiDoc } from 'nestjs-zod'
 import { VersioningType } from '@nestjs/common'
-import { Environment } from './server/environment-schema'
+import { Environment, resolveTrustProxy } from './server/environment-schema'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 async function bootstrap() {
@@ -22,12 +22,6 @@ async function bootstrap() {
   // pnpm's strict node_modules.
   app.useBodyParser('json', { limit: appConfig.bodyLimit })
   app.useBodyParser('urlencoded', { limit: appConfig.bodyLimit, extended: true })
-
-  // Trust the first proxy hop so `req.ip` (used by the rate limiter) resolves to the real client from
-  // `X-Forwarded-For`, not the reverse proxy's address — otherwise every client shares one throttle
-  // bucket behind nginx. `1` = exactly one proxy in front; bump this to match the real hop count if
-  // another proxy (e.g. a CDN) is added.
-  app.set('trust proxy', 1)
 
   // The OpenAPI UI/JSON maps the entire API surface (every route + DTO), so it is not served in
   // production — it would hand an anonymous attacker a targeting map (Swagger streams via Express,
@@ -54,6 +48,12 @@ async function bootstrap() {
   app.enableShutdownHooks()
 
   const configService = app.get(ConfigService<Environment, true>)
+
+  // Where `req.ip` comes from. It is what the rate limiter buckets on, so trusting too few hops makes
+  // every client behind nginx share one bucket, and trusting too many lets a caller spoof
+  // X-Forwarded-For for a fresh bucket. Defaults to 1 — a single reverse proxy in front.
+  app.set('trust proxy', resolveTrustProxy(configService.get('TRUST_PROXY', { infer: true })))
+
   const HOST = configService.get('HOST', { infer: true })
   const PORT = configService.get('PORT', { infer: true })
   const corsOrigins = configService.get('CORS_ORIGINS', { infer: true })
